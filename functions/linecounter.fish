@@ -7,22 +7,31 @@ function linecounter
                 echo "Apua"
             case r recursive
                 set recursive true
-            case s separate
-                set separate true
+            case p print
+                set print true
         end
     end
     #echo $files
     #echo $recursive
     #echo $separate
 
-    if set -q separate
-        for file in $files
+    for file in $files
+        if test -d $file
+            if set -q recursive
+                echo "Directory: $file"
+                set current_lines (linecounter $file/* -r)
+            else
+                set current_lines 0
+            end
+        else
             set current_lines (cat $file | wc -l)
-            echo $file $current_lines
-            set lines $lines $current_lines +
         end
+        if set -q print
+            echo $file $current_lines
+        end
+        set lines $lines $current_lines +
     end
 
     set lines $lines 0
-    echo "Total lines " (math $lines)
+    echo (math $lines)
 end
