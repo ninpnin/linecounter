@@ -1,4 +1,5 @@
 function linecounter
+    # Parse arguments
     getopts $argv | while read -l key value
         switch $key
             case _
@@ -11,14 +12,11 @@ function linecounter
                 set print true
         end
     end
-    #echo $files
-    #echo $recursive
-    #echo $separate
 
+    # Count lines
     for file in $files
         if test -d $file
             if set -q recursive
-                echo "Directory: $file"
                 set current_lines (linecounter $file/* -r)
             else
                 set current_lines 0
@@ -32,6 +30,11 @@ function linecounter
         set lines $lines $current_lines +
     end
 
+    # Sum up and print result
     set lines $lines 0
-    echo (math $lines)
+    if set -q print
+        echo "Total lines: " (math $lines)
+    else
+        echo (math $lines)
+    end
 end
